@@ -1,3 +1,13 @@
+# YAML
+## Ключ - значение
+Fruit: Apple
+Meat: Chiken
+## Массивы/списки
+Fruits:
+  - Ordnge
+  - Apple
+
+
 # ansible
 ## Установка 
 ### sudo apt update
