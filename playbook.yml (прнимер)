@@ -1,0 +1,93 @@
+---
+- name: Настройка веб-серверов и баз данных
+  hosts: all  # Применяется ко всем хостам из инвентаря
+  become: yes  # Выполнять задачи с правами root
+  vars:
+    web_packages:  # Пакеты для веб-серверов
+      - apache2
+      - php
+      - libapache2-mod-php
+    db_packages:  # Пакеты для баз данных
+      - mysql-server
+      - mysql-client
+    db_name: mydatabase  # Имя базы данных
+    db_user: myuser      # Пользователь базы данных
+    db_password: mypassword  # Пароль пользователя базы данных
+
+  tasks:
+    - name: Обновление списка пакетов
+      apt:
+        update_cache: yes
+      when: ansible_os_family == "Debian"  # Только для Debian/Ubuntu
+
+    - name: Установка пакетов для веб-серверов
+      apt:
+        name: "{{ web_packages }}"
+        state: present
+      when: "'web' in group_names"  # Только для хостов в группе web
+
+    - name: Установка пакетов для баз данных
+      apt:
+        name: "{{ db_packages }}"
+        state: present
+      when: "'db' in group_names"  # Только для хостов в группе db
+
+    - name: Запуск и включение Apache на веб-серверах
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+      when: "'web' in group_names"
+
+    - name: Запуск и включение MySQL на серверах баз данных
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+      when: "'db' in group_names"
+
+    - name: Создание базы данных
+      mysql_db:
+        name: "{{ db_name }}"
+        state: present
+      when: "'db' in group_names"
+
+    - name: Создание пользователя базы данных
+      mysql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
+        priv: "{{ db_name }}.*:ALL"
+        state: present
+      when: "'db' in group_names"
+
+    - name: Копирование конфигурационного файла Apache
+      copy:
+        src: files/apache.conf  # Файл из директории files/
+        dest: /etc/apache2/sites-available/000-default.conf
+        owner: root
+        group: root
+        mode: '0644'
+      when: "'web' in group_names"
+      notify: Перезапуск Apache  # Вызов обработчика
+
+    - name: Копирование тестовой веб-страницы
+      copy:
+        content: "Hello, this is a test page from {{ inventory_hostname }}!"
+        dest: /var/www/html/index.html
+        owner: www-data
+        group: www-data
+        mode: '0644'
+      when: "'web' in group_names"
+
+    - name: Открытие порта 80 в firewall
+      ufw:
+        rule: allow
+        port: 80
+        proto: tcp
+      when: "'web' in group_names"
+
+  handlers:
+    - name: Перезапуск Apache
+      service:
+        name: apache2
+        state: restarted
