@@ -1,7 +1,7 @@
 # YAML
 ## Ключ - значение
-Fruit: Apple
-Meat: Chiken
+### Fruit: Apple
+### Meat: Chiken
 ## Массивы/списки
 Fruits:
   - Ordnge
