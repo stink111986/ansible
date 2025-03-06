@@ -11,10 +11,10 @@ Banana:
       Calories: 102
       Fat: 0.4g
       
-### Пример инвентарного файла (INI-формат)
-# #Группа для веб-серверов
-[web]
-web1 ansible_host=192.168.1.101 ansible_user=admin ansible_ssh_pass=password123 location=Moscow
+## Пример инвентарного файла (INI-формат)
+### # Группа для веб-серверов
+### # [web]
+### # web1 ansible_host=192.168.1.101 ansible_user=admin ansible_ssh_pass=password123 location=Moscow
 web2 ansible_host=192.168.1.102 ansible_user=admin ansible_ssh_pass=password123 location=Murmansk
 web3 ansible_host=192.168.1.103 ansible_user=admin ansible_ssh_pass=password123 location=Murmansk
 
