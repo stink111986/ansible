@@ -6,7 +6,75 @@ Meat: Chiken
 Fruits:
   - Ordnge
   - Apple
+## Словари/Мапы
+Banana:
+      Calories: 102
+      Fat: 0.4g
+      
+### Пример инвентарного файла (INI-формат)
+# Группа для веб-серверов
+[web]
+web1 ansible_host=192.168.1.101 ansible_user=admin ansible_ssh_pass=password123 location=Moscow
+web2 ansible_host=192.168.1.102 ansible_user=admin ansible_ssh_pass=password123 location=Murmansk
+web3 ansible_host=192.168.1.103 ansible_user=admin ansible_ssh_pass=password123 location=Murmansk
 
+# Группа для баз данных
+[db]
+db1 ansible_host=192.168.1.201 ansible_user=admin ansible_ssh_pass=password123 location=Moscow
+db2 ansible_host=192.168.1.202 ansible_user=admin ansible_ssh_pass=password123 location=Murmansk
+
+# Группа по локациям
+[moscow]
+web1
+db1
+
+[murmansk]
+web2
+web3
+db2
+
+### Пример инвентарного файла (YAML-формат)
+
+all:
+  children:
+    web:
+      hosts:
+        web1:
+          ansible_host: 192.168.1.101
+          ansible_user: admin
+          ansible_ssh_pass: password123
+          location: Moscow
+        web2:
+          ansible_host: 192.168.1.102
+          ansible_user: admin
+          ansible_ssh_pass: password123
+          location: Murmansk
+        web3:
+          ansible_host: 192.168.1.103
+          ansible_user: admin
+          ansible_ssh_pass: password123
+          location: Murmansk
+    db:
+      hosts:
+        db1:
+          ansible_host: 192.168.1.201
+          ansible_user: admin
+          ansible_ssh_pass: password123
+          location: Moscow
+        db2:
+          ansible_host: 192.168.1.202
+          ansible_user: admin
+          ansible_ssh_pass: password123
+          location: Murmansk
+    moscow:
+      hosts:
+        web1:
+        db1:
+    murmansk:
+      hosts:
+        web2:
+        web3:
+        db2:
 
 # ansible
 ## Установка 
